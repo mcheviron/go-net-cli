@@ -16,8 +16,12 @@ func main() {
 
 	cliFlags := []cli.Flag{
 		&cli.StringFlag{
-			Name:  "url",
-			Value: "localhost",
+			Name:    "url",
+			Aliases: []string{"u"},
+		},
+		&cli.StringFlag{
+			Name:    "ip",
+			Aliases: []string{"i"},
 		},
 	}
 
@@ -26,8 +30,8 @@ func main() {
 			Name:  "ip",
 			Usage: "Looks up a hostname's IP/s.",
 			Flags: cliFlags,
-			Action: func(c *cli.Context) error {
-				ip, err := net.LookupIP(c.String("url"))
+			Action: func(ctx *cli.Context) error {
+				ip, err := net.LookupIP(ctx.String("url"))
 				if err != nil {
 					fmt.Println(err)
 				}
@@ -41,8 +45,8 @@ func main() {
 			Name:  "ns",
 			Usage: "Looks up a hostname's Name Servers.",
 			Flags: cliFlags,
-			Action: func(c *cli.Context) error {
-				ns, err := net.LookupNS(c.String("url"))
+			Action: func(ctx *cli.Context) error {
+				ns, err := net.LookupNS(ctx.String("url"))
 				if err != nil {
 					fmt.Println(err)
 				}
@@ -56,8 +60,8 @@ func main() {
 			Name:  "cname",
 			Usage: "Looks up a hostname's CNAMEs.",
 			Flags: cliFlags,
-			Action: func(c *cli.Context) error {
-				cname, err := net.LookupCNAME(c.String("url"))
+			Action: func(ctx *cli.Context) error {
+				cname, err := net.LookupCNAME(ctx.String("url"))
 				if err != nil {
 					fmt.Println(err)
 				}
@@ -69,13 +73,28 @@ func main() {
 			Name:  "mx",
 			Usage: "Looks up a hostname's MX records.",
 			Flags: cliFlags,
-			Action: func(c *cli.Context) error {
-				mx, err := net.LookupMX(c.String("url"))
+			Action: func(ctx *cli.Context) error {
+				mx, err := net.LookupMX(ctx.String("url"))
 				if err != nil {
 					fmt.Println(err)
 				}
 				for i := range mx {
 					fmt.Println(mx[i].Host, mx[i].Pref)
+				}
+				return nil
+			},
+		},
+		{
+			Name:  "ptr",
+			Usage: "Reverse lookup of an IP",
+			Flags: cliFlags,
+			Action: func(ctx *cli.Context) error {
+				ptr, err := net.LookupAddr(ctx.String("ip"))
+				if err != nil {
+					fmt.Println(err)
+				}
+				for i := range ptr {
+					fmt.Println(ptr[i])
 				}
 				return nil
 			},
